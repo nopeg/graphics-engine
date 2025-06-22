@@ -2,156 +2,174 @@
 
 int main() 
 {
-	GLFWwindow* window;
+    // Инициализация GLFW
+    if (!glfwInit()) 
+    {
+        cout << "Failed to initialize GLFW" << endl;
+        return -1;
+    }
 
-	if (!glfwInit()) 
-	{
-		return -1;
-	}
-	
-	window = glfwCreateWindow(640, 480, "window", NULL, NULL);
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
-	{
-		cout << "Couldn't load opengl" << endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glClearColor(0, 0, 0, 1);
-
-
-	//tringle vertices
-	float vertices[] = {
-		0.5f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		-0.5f, 0.5f, 0.0f
-	};
-
-	unsigned int indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-
-	//vertex buffer object
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	//vertex array object
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	//shaders sources
-	std::string vertexShaderString = R"(
-
-		#version 330 core
-
-		layout(location = 0) in vec3 in_position;
-
-		out Vertex 
-		{
-			vec4 color;
-		} out_vertex;
-
-		void main()
-		{
-			out_vertex.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-			gl_Position = vec4(in_position, 1.0);
-		}
-
-	)";
-	const char* vertexShaderSource = vertexShaderString.c_str();
-
-    std::string fragmentShaderString = R"(
-
-		#version 330 core
-
-		out vec4 FragColor;
-
-		void main()
-		{
-			FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		}
-
-	)";
-	const char* fragmentShaderSource = fragmentShaderString.c_str();
+    // Настройка GLFW
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
-	//compiling shaders
-    unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+    // Создание окна
+    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Engine", NULL, NULL);
+    if (!window) 
+    {
+        cout << "Failed to create GLFW window" << endl;
+        glfwTerminate();
+        return -1;
+    }
 
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if(!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
-	}
+    // Сделать контекст текущим
+    glfwMakeContextCurrent(window);
 
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if(!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
-	}
+    // Инициализация GLEW
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) 
+    {
+        cout << "Failed to initialize GLEW" << endl;
+        glfwTerminate();
+        return -1;
+    }
 
-	//linking shaders to shader program
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
+    // Версия OpenGL
+    cout << "OpenGL Version: " << glGetString(GL_VERSION) << endl;
 
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+    // Вершины прямоугольника
+    float vertices[] = {
+         0.5f,  0.5f, 0.0f,  // верхний правый
+         0.5f, -0.5f, 0.0f,  // нижний правый
+        -0.5f, -0.5f, 0.0f,  // нижний левый
+        -0.5f,  0.5f, 0.0f   // верхний левый
+    };
 
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if(!success) 
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << endl;
-	}
+    // Индексы вершин
+    unsigned int indices[] = {
+        0, 1, 3,  // первый треугольник
+        1, 2, 3   // второй треугольник
+    };
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+    // Vertex Array Object (VAO)
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // Vertex Buffer Object (VBO)
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	while (!glfwWindowShouldClose(window)) 
-	{
-		glfwPollEvents();
+    // Element Buffer Object (EBO)
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+    // Указание атрибутов вершин
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
-		glUseProgram(shaderProgram);
-  		glBindVertexArray(VAO);
-  		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+    // Шейдеры
+    const char* vertexShaderSource = R"(
+        #version 330 core
+        layout (location = 0) in vec3 aPos;
+        void main()
+        {
+            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+        }
+    )";
 
-		glfwSwapBuffers(window);
-	}
+    const char* fragmentShaderSource = R"(
+        #version 330 core
+        out vec4 FragColor;
+        void main()
+        {
+            FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        } 
+    )";
 
-	glfwTerminate();
-	return 0;
-}                                                                                              
+    // Компиляция вершинного шейдера
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    // Проверка ошибок вершинного шейдера
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
+    }
+
+    // Компиляция фрагментного шейдера
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Проверка ошибок фрагментного шейдера
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
+    }
+
+    // Создание шейдерной программы
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    // Проверка ошибок линковки
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << endl;
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // Режим отрисовки линий
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    // Цикл рендеринга
+    while (!glfwWindowShouldClose(window))
+    {
+        // Обработка ввода
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+
+        // Очистка буфера цвета
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Рисуем прямоугольник
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // Обмен буферов и опрос событий
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    // Освобождение ресурсов
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteProgram(shaderProgram);
+
+    // Завершение работы GLFW
+    glfwTerminate();
+    return 0;
+}

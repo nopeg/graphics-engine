@@ -1,1 +1,9 @@
-/build
+bin/
+lib/
+build/
+
+*.exe
+*.ilk
+*.pdb
+*.obj
+*.log
