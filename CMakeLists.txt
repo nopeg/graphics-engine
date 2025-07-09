@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.28.2)
 project(graphics-engine VERSION 1.0.0 LANGUAGES CXX)
 
-# Настройка выходных директорий
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
 
-# Автоматическое добавление текущих каталогов в include path
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Копирование ресурсов
-file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY resources DESTINATION "${CMAKE_BINARY_DIR}/bin")
 
-# Исходные файлы
 file(GLOB SOURCE_FILES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+
 
 # Загрузка зависимостей
 include(FetchContent)
@@ -37,17 +34,17 @@ FetchContent_Declare(
     GIT_TAG 1.0.0
 )
 
-# GLEW (используем форк с поддержкой CMake)
+# GLEW-CMake
 FetchContent_Declare(
     glew
     GIT_REPOSITORY https://github.com/perlmint/glew-cmake.git
-    GIT_TAG master  # или конкретный тег, например GLEW_2.2.0
+    GIT_TAG master
 )
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)  # Собираем статическую библиотеку
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(GLEW_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
 
-# Получение зависимостей
 FetchContent_MakeAvailable(glfw glm glew)
+
 
 # Исполняемый файл
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -63,7 +60,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # Линковка библиотек
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
-    libglew_static  # Имя цели для статической библиотеки GLEW
+    libglew_static
 )
 
 # Платформо-специфичные настройки
