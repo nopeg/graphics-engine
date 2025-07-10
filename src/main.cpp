@@ -10,7 +10,7 @@ int main()
     try 
     {
         Window window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-        Shader shader(
+        Shader* shader = Shader::create(
             "./resources/shaders/vertex.glsl", 
             "./resources/shaders/fragment.glsl"
         );
@@ -34,8 +34,8 @@ int main()
         IndexBuffer* ib = IndexBuffer::create(indices, 6);
 
         va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 3 * sizeof(float), 0);
-        
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         while (!window.shouldClose()) 
         {
@@ -45,7 +45,7 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             window.clear();
 
-            shader.use();
+            shader->use();
             va->bind();
             ib->bind();
             glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr);

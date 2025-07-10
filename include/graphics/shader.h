@@ -1,18 +1,13 @@
 #pragma once
+#include <string>
 
-#include "config.h"
-
-class Shader 
-{
+class Shader {
 public:
-    Shader(const char* vertexPath, const char* fragmentPath);
-    ~Shader();
-
-    void use() const;
-    unsigned int getID() const { return id; }
-
-private:
-    unsigned int id;
-    string readShader(const char* shaderPath);
-    void checkCompileErrors(unsigned int shader, const string& type);
+    virtual ~Shader() = default;
+    
+    virtual void use() const = 0;
+    virtual void setUniform(const std::string& name, int value) = 0;
+    virtual void setUniform(const std::string& name, float value) = 0;
+    
+    static Shader* create(const char* vertexPath, const char* fragmentPath);
 };
