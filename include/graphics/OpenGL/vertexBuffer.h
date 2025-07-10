@@ -2,7 +2,8 @@
 
 #include "config.h"
 
-class VertexBuffer {
+class VertexBuffer 
+{
 public:
     VertexBuffer(const void* data, unsigned int size);
     ~VertexBuffer();
@@ -11,5 +12,5 @@ public:
     void unbind() const;
 
 private:
-    unsigned int m_RendererID;
+    unsigned int rendererID;
 };

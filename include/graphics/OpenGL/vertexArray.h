@@ -1,10 +1,10 @@
 #pragma once
 
 #include "config.h"
+#include "vertexBuffer.h"
 
-class VertexBuffer;
-
-class VertexArray {
+class VertexArray 
+{
 public:
     VertexArray();
     ~VertexArray();
@@ -15,5 +15,5 @@ public:
                   GLenum type, bool normalized, unsigned int stride, const void* pointer);
 
 private:
-    unsigned int m_RendererID;
+    unsigned int rendererID;
 };

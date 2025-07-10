@@ -5,19 +5,26 @@
 #include "vertexArray.h"
 #include "indexBuffer.h"
 
-int main() {
-    try {
+int main() 
+{
+    try 
+    {
         Window window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-        Shader shader("./resources/shaders/vertex.glsl", "./resources/shaders/fragment.glsl");
+        Shader shader(
+            "./resources/shaders/vertex.glsl", 
+            "./resources/shaders/fragment.glsl"
+        );
 
-        float vertices[] = {
+        float vertices[] = 
+        {
              0.5f,  0.5f, 0.0f,
              0.5f, -0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f,
             -0.5f,  0.5f, 0.0f
         };
 
-        unsigned int indices[] = {
+        unsigned int indices[] = 
+        {
             0, 1, 3,
             1, 2, 3
         };
@@ -32,7 +39,8 @@ int main() {
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        while (!window.shouldClose()) {
+        while (!window.shouldClose()) 
+        {
             if (window.isKeyPressed(GLFW_KEY_ESCAPE))
                 glfwSetWindowShouldClose(window.get(), true);
 
@@ -46,8 +54,10 @@ int main() {
             window.swapBuffers();
             window.pollEvents();
         }
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
+    } 
+    catch (const std::exception& e) 
+    {
+        std::cerr << e.what() << endl;
         return -1;
     }
 

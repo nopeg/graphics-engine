@@ -13,8 +13,8 @@ public:
     void clear() const;
     bool isKeyPressed(int key) const;
 
-    GLFWwindow* get() const { return m_window; }
+    GLFWwindow* get() const { return window; }
 
 private:
-    GLFWwindow* m_window;
+    GLFWwindow* window;
 };

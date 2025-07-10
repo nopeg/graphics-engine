@@ -9,10 +9,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 file(COPY resources DESTINATION "${CMAKE_BINARY_DIR}/bin")
 
-file(GLOB SOURCE_FILES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE SOURCE_FILES 
+    "${PROJECT_SOURCE_DIR}/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/graphics/OpenGL/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/graphics/*.cpp"
+)
 
-
-# Загрузка зависимостей
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 
@@ -46,24 +48,22 @@ set(GLEW_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw glm glew)
 
 
-# Исполняемый файл
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-# Настройка include-директорий
 target_include_directories(${PROJECT_NAME} PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-    ${glm_SOURCE_DIR}
-    ${glew_SOURCE_DIR}/include
-    ${glfw_SOURCE_DIR}/include
+    "${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_SOURCE_DIR}/include/graphics"
+    "${PROJECT_SOURCE_DIR}/include/graphics/OpenGL"
+    "${glm_SOURCE_DIR}"
+    "${glew_SOURCE_DIR}/include"
+    "${glfw_SOURCE_DIR}/include"
 )
 
-# Линковка библиотек
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     libglew_static
 )
 
-# Платформо-специфичные настройки
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
 else()
@@ -71,10 +71,8 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 endif()
 
-# Настройки компилятора
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
-# Генерация файлов для IDE
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Source Files" FILES ${SOURCE_FILES})
