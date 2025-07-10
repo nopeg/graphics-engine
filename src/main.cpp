@@ -29,14 +29,12 @@ int main()
             1, 2, 3
         };
 
-        VertexArray va;
+        VertexArray* va = VertexArray::create();
+        VertexBuffer* vb = VertexBuffer::create(vertices, sizeof(vertices));
+        IndexBuffer* ib = IndexBuffer::create(indices, 6);
 
-        VertexBuffer vb(vertices, sizeof(vertices));
-
-        va.addBuffer(vb, 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        IndexBuffer ib(indices, 6);
-
+        va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 3 * sizeof(float), 0);
+        
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         while (!window.shouldClose()) 
@@ -48,12 +46,17 @@ int main()
             window.clear();
 
             shader.use();
-            va.bind();
-            glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
+            va->bind();
+            ib->bind();
+            glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr);
 
             window.swapBuffers();
             window.pollEvents();
         }
+
+        delete va;
+        delete vb;
+        delete ib;
     } 
     catch (const std::exception& e) 
     {

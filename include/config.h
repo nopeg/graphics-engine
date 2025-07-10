@@ -1,4 +1,5 @@
 #pragma once
+#define USE_OPENGL 1
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
