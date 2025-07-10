@@ -1,6 +1,7 @@
 #include "config.h"
 #include "window.h"
 #include "shader.h"
+#include "renderer.h"
 #include "vertexBuffer.h"
 #include "vertexArray.h"
 #include "indexBuffer.h"
@@ -14,6 +15,7 @@ int main()
             "./resources/shaders/vertex.glsl", 
             "./resources/shaders/fragment.glsl"
         );
+        Renderer* renderer = Renderer::create();
 
         float vertices[] = 
         {
@@ -35,20 +37,20 @@ int main()
 
         va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 3 * sizeof(float), 0);
 
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
         while (!window.shouldClose()) 
         {
             if (window.isKeyPressed(GLFW_KEY_ESCAPE))
                 glfwSetWindowShouldClose(window.get(), true);
 
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            renderer->clear(0.2f, 0.3f, 0.3f, 1.0f);
             window.clear();
 
             shader->use();
             va->bind();
             ib->bind();
-            glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr);
+
+            renderer->setWireframeMode(true);
+            renderer->draw(*va, *ib, *shader);
 
             window.swapBuffers();
             window.pollEvents();
