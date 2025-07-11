@@ -40,6 +40,10 @@ bool Window::shouldClose() const
     return glfwWindowShouldClose(window);
 }
 
+void Window::close() {
+    glfwSetWindowShouldClose(static_cast<GLFWwindow*>(window), GLFW_TRUE);
+}
+
 void Window::swapBuffers() const 
 {
     glfwSwapBuffers(window);
@@ -48,11 +52,6 @@ void Window::swapBuffers() const
 void Window::pollEvents() const 
 {
     glfwPollEvents();
-}
-
-void Window::clear() const 
-{
-    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 bool Window::isKeyPressed(int key) const 

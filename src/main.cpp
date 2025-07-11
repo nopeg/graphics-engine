@@ -11,11 +11,11 @@ int main()
     try 
     {
         Window window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+        Renderer* renderer = Renderer::create();
         Shader* shader = Shader::create(
             "./resources/shaders/vertex.glsl", 
             "./resources/shaders/fragment.glsl"
         );
-        Renderer* renderer = Renderer::create();
 
         float vertices[] = 
         {
@@ -39,11 +39,7 @@ int main()
 
         while (!window.shouldClose()) 
         {
-            if (window.isKeyPressed(GLFW_KEY_ESCAPE))
-                glfwSetWindowShouldClose(window.get(), true);
-
             renderer->clear(0.2f, 0.3f, 0.3f, 1.0f);
-            window.clear();
 
             shader->use();
             va->bind();

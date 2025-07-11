@@ -1,5 +1,15 @@
 #include "rendererGL.h"
-#include <GL/glew.h>
+
+/*RendererGL::RendererGL(Window* window) {
+    glfwMakeContextCurrent(window->get());
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        throw std::runtime_error("Failed to initialize GLEW");
+    }
+
+    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    glEnable(GL_DEPTH_TEST);
+}*/
 
 void RendererGL::clear(float r, float g, float b, float a) {
     glClearColor(r, g, b, a);

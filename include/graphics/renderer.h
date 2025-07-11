@@ -1,4 +1,5 @@
 #pragma once
+
 #include "vertexArray.h"
 #include "indexBuffer.h"
 #include "shader.h"
@@ -15,5 +16,5 @@ public:
     ) = 0;
     virtual void setWireframeMode(bool enabled) = 0;
     
-    static Renderer* create();
+    static Renderer* create(/*Window* window*/);
 };
