@@ -13,6 +13,7 @@ public:
     void use() const override;
     void setUniform(const std::string& name, int value) override;
     void setUniform(const std::string& name, float value) override;
+    void setUniform(const std::string& name, float x, float y, float z, float w) override;
     
     unsigned int getID() const { return id; }
 

@@ -1,4 +1,5 @@
 #include "config.h"
+#include "cmath"
 #include "window.h"
 #include "shader.h"
 #include "renderer.h"
@@ -17,12 +18,12 @@ int main()
             "./resources/shaders/fragment.glsl"
         );
 
-        float vertices[] = 
-        {
-             0.5f,  0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f
+        float vertices[] = {
+            // positions          // colors
+            0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // top right - red
+            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom right - green
+            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // bottom left - blue
+            -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f    // top left - yellow
         };
 
         unsigned int indices[] = 
@@ -33,19 +34,24 @@ int main()
 
         VertexArray* va = VertexArray::create();
         VertexBuffer* vb = VertexBuffer::create(vertices, sizeof(vertices));
-        IndexBuffer* ib = IndexBuffer::create(indices, 6);
 
-        va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 3 * sizeof(float), 0);
+        va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 6 * sizeof(float), (void*)0);
+        va->addBuffer(*vb, 1, 3, ShaderDataType::Float, false, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        IndexBuffer* ib = IndexBuffer::create(indices, 6);
 
         while (!window.shouldClose()) 
         {
             renderer->clear(0.2f, 0.3f, 0.3f, 1.0f);
 
+            float timeValue = glfwGetTime();
+            float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+            
             shader->use();
+            shader->setUniform("time", static_cast<float>(glfwGetTime()));
+            
             va->bind();
             ib->bind();
 
-            renderer->setWireframeMode(true);
             renderer->draw(*va, *ib, *shader);
 
             window.swapBuffers();
@@ -55,6 +61,7 @@ int main()
         delete va;
         delete vb;
         delete ib;
+        delete shader;
     } 
     catch (const std::exception& e) 
     {
