@@ -4,7 +4,8 @@
 #include "indexBuffer.h"
 #include "shader.h"
 
-class Renderer {
+class Renderer 
+{
 public:
     virtual ~Renderer() = default;
     
@@ -16,5 +17,5 @@ public:
     ) = 0;
     virtual void setWireframeMode(bool enabled) = 0;
     
-    static Renderer* create(/*Window* window*/);
+    static Renderer* create();
 };

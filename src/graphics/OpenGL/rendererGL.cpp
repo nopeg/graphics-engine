@@ -1,17 +1,18 @@
 #include "rendererGL.h"
 
-/*RendererGL::RendererGL(Window* window) {
-    glfwMakeContextCurrent(window->get());
+RendererGL::RendererGL() 
+{  
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        throw std::runtime_error("Failed to initialize GLEW");
+    if (glewInit() != GLEW_OK) 
+    {
+        throw runtime_error("Failed to initialize GLEW");
     }
 
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-    glEnable(GL_DEPTH_TEST);
-}*/
+    cout << "OpenGL Version: " << glGetString(GL_VERSION) << endl;
+}
 
-void RendererGL::clear(float r, float g, float b, float a) {
+void RendererGL::clear(float r, float g, float b, float a) 
+{
     glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -28,6 +29,7 @@ void RendererGL::draw(
     glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void RendererGL::setWireframeMode(bool enabled) {
+void RendererGL::setWireframeMode(bool enabled) 
+{
     glPolygonMode(GL_FRONT_AND_BACK, enabled ? GL_LINE : GL_FILL);
 }

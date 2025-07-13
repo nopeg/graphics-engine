@@ -1,5 +1,6 @@
 #include "rendererGL.h"
 
-Renderer* Renderer::create() {
+Renderer* Renderer::create() 
+{
     return new RendererGL();
 }

@@ -19,15 +19,6 @@ Window::Window(int width, int height, const char* title)
     }
 
     glfwMakeContextCurrent(window);
-
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) 
-    {
-        glfwTerminate();
-        throw runtime_error("Failed to initialize GLEW");
-    }
-
-    cout << "OpenGL Version: " << glGetString(GL_VERSION) << endl;
 }
 
 Window::~Window() 
@@ -40,7 +31,8 @@ bool Window::shouldClose() const
     return glfwWindowShouldClose(window);
 }
 
-void Window::close() {
+void Window::close() 
+{
     glfwSetWindowShouldClose(static_cast<GLFWwindow*>(window), GLFW_TRUE);
 }
 

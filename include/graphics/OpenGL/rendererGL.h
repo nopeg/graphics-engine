@@ -4,9 +4,10 @@
 #include "config.h"
 #include "renderer.h"
 
-class RendererGL : public Renderer {
+class RendererGL : public Renderer 
+{
 public:
-    //RendererGL(Window* window);
+    RendererGL();
     void clear(float r, float g, float b, float a) override;
     void draw(
         const VertexArray& va, 
