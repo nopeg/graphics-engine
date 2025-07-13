@@ -1,11 +1,8 @@
 #include "config.h"
 #include "cmath"
 #include "window.h"
-#include "shader.h"
 #include "renderer.h"
-#include "vertexBuffer.h"
-#include "vertexArray.h"
-#include "indexBuffer.h"
+#include "texture.h"
 
 int main() 
 {
@@ -18,12 +15,13 @@ int main()
             "./resources/shaders/fragment.glsl"
         );
 
-        float vertices[] = {
-            // positions          // colors
-            0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // top right - red
-            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom right - green
-            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // bottom left - blue
-            -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f    // top left - yellow
+        float vertices[] = 
+        {
+            // positions          // colors           // texture coords
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   8.0f, 8.0f,   // top right
+            0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,   8.0f, 0.0f,   // bottom right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 8.0f    // top left
         };
 
         unsigned int indices[] = 
@@ -35,9 +33,15 @@ int main()
         VertexArray* va = VertexArray::create();
         VertexBuffer* vb = VertexBuffer::create(vertices, sizeof(vertices));
 
-        va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 6 * sizeof(float), (void*)0);
-        va->addBuffer(*vb, 1, 3, ShaderDataType::Float, false, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        va->addBuffer(*vb, 0, 3, ShaderDataType::Float, false, 8 * sizeof(float), (void*)0);
+        va->addBuffer(*vb, 1, 3, ShaderDataType::Float, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        va->addBuffer(*vb, 2, 2, ShaderDataType::Float, false, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        
         IndexBuffer* ib = IndexBuffer::create(indices, 6);
+
+        Texture* texture = Texture::create("./resources/textures/texture.png");
+        texture->setWrapMode(TextureWrapMode::Repeat);
+        texture->setFilterMode(TextureFilterMode::Nearest);
 
         while (!window.shouldClose()) 
         {
@@ -49,6 +53,9 @@ int main()
             shader->use();
             shader->setUniform("time", static_cast<float>(glfwGetTime()));
             
+            texture->bind(0);
+            shader->setUniform("texture1", 0);
+            
             va->bind();
             ib->bind();
 
@@ -58,6 +65,7 @@ int main()
             window.pollEvents();
         }
 
+        delete texture;
         delete va;
         delete vb;
         delete ib;
@@ -65,7 +73,7 @@ int main()
     } 
     catch (const std::exception& e) 
     {
-        std::cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
         return -1;
     }
 

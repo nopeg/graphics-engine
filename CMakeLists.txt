@@ -45,8 +45,18 @@ FetchContent_Declare(
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(GLEW_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(glfw glm glew)
+# STB Image
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+)
 
+FetchContent_MakeAvailable(glfw glm glew stb)
+
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE ${stb_SOURCE_DIR})
+target_compile_definitions(stb_image INTERFACE STB_IMAGE_IMPLEMENTATION)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -62,6 +72,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     libglew_static
+    stb_image
 )
 
 if(WIN32)
